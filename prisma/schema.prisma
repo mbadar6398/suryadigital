@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto, uuidOssp(map: "uuid-ossp")]
+}
+
+model User {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  first_name String    @db.VarChar()
+  last_name  String    @db.VarChar()
+  birth_date String    @unique @db.VarChar()
+  timezone   String    @unique @db.VarChar()
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  Message    Message[]
+
+  @@map(name: "user")
+}
+
+model Message {
+  id         String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId     String        @db.Uuid
+  text       String        @db.Text()
+  type       MessageType   @default(BIRTHDAY)
+  status     MessageStatus @default(SCHEDULED)
+  failed     String        @db.Text()
+  user       User          @relation(fields: [userId], references: [id])
+  sent_at    DateTime      @db.Timestamp()
+  created_at DateTime      @default(now()) @db.Timestamp()
+  updated_at DateTime      @default(now()) @updatedAt @db.Timestamp()
+
+  @@map(name: "message")
+}
+
+enum MessageType {
+  BIRTHDAY
+}
+
+enum MessageStatus {
+  SCHEDULED
+  SENT
+  FAILED
+}
