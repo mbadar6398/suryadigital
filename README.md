@@ -10,7 +10,9 @@ $ npm install
 ```
 
 ## Environment variables
-Please ask our team to get our dev and test .env files.
+NODE_ENV="development"
+DATABASE_URL="postgresql://postgres@localhost:5432/suryadigital?schema=public"
+DEBUG=TRUE
 
 ## Running the app
 This is how you run this project on your local environment
