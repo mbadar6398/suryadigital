@@ -15,7 +15,7 @@ export class MessageRepository {
     return this.prisma.message.create({ data: dto });
   }
 
-  async softDelete(user_id: string): Promise<void> {
+  async softDeleteByUserId(user_id: string): Promise<void> {
     await this.prisma.message.updateMany({
       where: { user_id },
       data: { deleted_at: new Date() },

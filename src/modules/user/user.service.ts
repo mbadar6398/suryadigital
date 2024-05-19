@@ -39,6 +39,6 @@ export class UserService {
 
     // TODO : this should be in a db transaction
     await this.messageService.deleteByUserId(id);
-    await this.userRepository.softDelete(id, user);
+    await this.userRepository.softDelete(id);
   }
 }

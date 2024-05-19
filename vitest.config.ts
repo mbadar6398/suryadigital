@@ -16,7 +16,7 @@ export default defineConfig({
         statements: 60,
       },
     },
-    include: ['./**/*.spec.ts'],
+    include: ['src/**/*/*.spec.ts'],
   },
   plugins: [
     tsconfigPaths(),

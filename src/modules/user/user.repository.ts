@@ -15,10 +15,10 @@ export class UserRepository {
     return await this.prisma.user.create({ data: user });
   }
 
-  async softDelete(id: string, data: User): Promise<void> {
+  async softDelete(id: string): Promise<void> {
     await this.prisma.user.update({
       where: { id: id },
-      data: { ...data, deleted_at: new Date() },
+      data: { deleted_at: new Date() },
     });
   }
 

@@ -17,10 +17,10 @@
     "commit": "npx git-cz",
     "commitlint": "commitlint --edit",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "dotenv -e .env.test -- npx prisma db push && vitest run -c ./vitest.config.ts",
-    "test:ui": "dotenv -e .env.test -- npx prisma db push && vitest -c ./vitest.config.ts --ui",
-    "test:watch": "dotenv -e .env.test -- npx prisma db push && vitest -c ./vitest.config.ts",
-    "test:cov": "dotenv -e .env.test -- npx prisma db push && vitest run -c ./vitest.config.ts --coverage",
+    "test": "dotenv -e .env.test -- vitest run -c ./vitest.config.ts",
+    "test:ui": "dotenv -e .env.test -- vitest -c ./vitest.config.ts --ui",
+    "test:watch": "dotenv -e .env.test -- vitest -c ./vitest.config.ts",
+    "test:cov": "dotenv -e .env.test -- vitest run -c ./vitest.config.ts --coverage",
     "migrate:dev": "npx prisma migrate dev"
   },
   "dependencies": {
