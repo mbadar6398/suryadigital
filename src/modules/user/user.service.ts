@@ -4,6 +4,7 @@ import { AppException } from '@src/common/exceptions/app-exception';
 import { ResourceNotFound } from '@src/common/exceptions/common.exception';
 import { UserRepository } from '@src/modules/user/user.repository';
 import { EmailAlreadyExist } from './user.exceptions';
+import { MessageService } from '../message/message.service';
 
 export type CreateUserRequestDto = Omit<
   User,
@@ -12,16 +13,21 @@ export type CreateUserRequestDto = Omit<
 
 @Injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private messageService: MessageService,
+  ) {}
 
-  async create(dto: CreateUserRequestDto): Promise<User> {
+  async create(dto: CreateUserRequestDto): Promise<void> {
     const user = await this.userRepository.findByEmail(dto.email);
 
     if (user) {
       throw AppException.fromCode(EmailAlreadyExist);
     }
 
-    return await this.userRepository.create(dto);
+    const insrtedUser = await this.userRepository.create(dto);
+
+    await this.messageService.scheduleBirthdayMessage(insrtedUser);
   }
 
   async delete(id: string): Promise<void> {
@@ -30,6 +36,9 @@ export class UserService {
     if (!user) {
       throw AppException.fromCode(ResourceNotFound);
     }
+
+    // TODO : this should be in a db transaction
+    await this.messageService.deleteByUserId(id);
     await this.userRepository.softDelete(id, user);
   }
 }
