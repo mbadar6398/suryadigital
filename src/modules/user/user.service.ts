@@ -5,6 +5,7 @@ import { ResourceNotFound } from '@src/common/exceptions/common.exception';
 import { UserRepository } from '@src/modules/user/user.repository';
 import { EmailAlreadyExist } from './user.exceptions';
 import { MessageService } from '../message/message.service';
+import { format, getYear, isBefore, setYear } from 'date-fns';
 
 export type CreateUserRequestDto = Omit<
   User,
@@ -25,9 +26,15 @@ export class UserService {
       throw AppException.fromCode(EmailAlreadyExist);
     }
 
-    const insrtedUser = await this.userRepository.create(dto);
+    const insertedUser = await this.userRepository.create(dto);
 
-    await this.messageService.scheduleBirthdayMessage(insrtedUser);
+    const currentYear = getYear(new Date());
+    const currentDate = format(new Date(), `${currentYear}-MM-dd`);
+    const nextBirthday = setYear(insertedUser.birth_date, currentYear);
+
+    if (isBefore(nextBirthday, currentDate) === false) {
+      await this.messageService.scheduleBirthdayMessage(insertedUser);
+    }
   }
 
   async delete(id: string): Promise<void> {

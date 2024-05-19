@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigModule } from '@src/configs/config.module';
 import { MessageService } from '@src/modules/message/message.service';
-import { PrismaModule } from '@src/libs/prisma/prisma.module';
 import { vi, describe, beforeEach, expect, it } from 'vitest';
 import { mockDeep, mockReset, DeepMockProxy } from 'vitest-mock-extended';
 import { MessageRepository } from '@src/modules/message/message.repository';
@@ -17,7 +16,7 @@ describe('User Service', () => {
   beforeEach(async () => {
     repositoryMock = mockDeep<MessageRepository>();
     const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule, PrismaModule],
+      imports: [ConfigModule],
       providers: [
         MessageService,
         { provide: MessageRepository, useValue: repositoryMock },
@@ -83,6 +82,18 @@ describe('User Service', () => {
         timezone: 'Asia/Jakarta',
       } as User);
 
+      await expect(result).resolves.toStrictEqual(dto);
+      expect(repositoryMock.create).toHaveBeenCalledOnce();
+    });
+    it('shoulds not throwing error when no error occured', async () => {
+      const result = messageService.scheduleBirthdayMessage({
+        id: '128eu-1298eh-e9h219d-219dh219',
+        first_name: 'Muhammad',
+        last_name: 'badar',
+        birth_date: '1998-03-06',
+        timezone: 'Asia/Jakarta',
+      } as User);
+
       await expect(result).resolves.toStrictEqual(undefined);
       expect(repositoryMock.create).toHaveBeenCalledOnce();
     });
@@ -118,6 +129,50 @@ describe('User Service', () => {
 
       await expect(result).resolves.toStrictEqual(undefined);
       expect(repositoryMock.changeStatus).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe('getNextBirthday', () => {
+    it('should return expected result with correct timezone', async () => {
+      const birth_date = '1998-03-06';
+      const timezone = 'Asia/Jakarta';
+      const nextYear = false;
+
+      const result = messageService.getNextBirthday(
+        birth_date,
+        timezone,
+        nextYear,
+      );
+      const expectedResult = new Date('2024-03-06T02:00:00.000Z');
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('should return expected result with different timezone', async () => {
+      const birth_date = '1998-03-06';
+      const timezone = 'Asia/Makassar';
+      const nextYear = false;
+
+      const result = messageService.getNextBirthday(
+        birth_date,
+        timezone,
+        nextYear,
+      );
+      const expectedResult = new Date('2024-03-06T01:00:00.000Z');
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('should return expected result with next year true', async () => {
+      const birth_date = '1998-03-06';
+      const timezone = 'Asia/Makassar';
+      const nextYear = true;
+
+      const result = messageService.getNextBirthday(
+        birth_date,
+        timezone,
+        nextYear,
+      );
+      const expectedResult = new Date('2025-03-06T01:00:00.000Z');
+      expect(result).toEqual(expectedResult);
     });
   });
 });

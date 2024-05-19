@@ -11,7 +11,7 @@ export class TasksService {
     @InjectQueue('message') private readonly messageQueue: Queue,
   ) {}
 
-  @Cron('0 * * * *')
+  @Cron('*/10 * * * * *')
   async handleScheduledMessage(): Promise<void> {
     const message = await this.messageService.getScheduled();
     message.forEach((msg) => {

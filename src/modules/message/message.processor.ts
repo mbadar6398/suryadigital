@@ -12,6 +12,7 @@ export class MessageProcessor {
     try {
       await this.messageService.sendMessage(job.data.user.email, job.data.text);
       await this.messageService.changeStatus(job.data.id, 'SENT');
+      await this.messageService.scheduleBirthdayMessage(job.data.user, true);
     } catch (error) {
       Logger.error(error);
     }

@@ -34,7 +34,9 @@ export class MessageRepository {
       where: {
         status: MessageStatus.SCHEDULED,
         deleted_at: null,
-        scheduled_at: { lte: new Date() },
+        scheduled_at: {
+          lte: new Date().toISOString(),
+        },
       },
       include: { user: true },
     });
