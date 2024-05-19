@@ -23,7 +23,7 @@ const bootstrap = async () => {
     .setTitle('Surya Digital Test Api')
     .setDescription('This api documentation for testing purpose only.')
     .setVersion('1.0')
-    .addServer('http://localhost:3000/', 'Local environment')
+    .addServer('http://localhost:3000/api', 'Local environment')
     .addTag('User', 'User related operations')
     .build();
 
