@@ -9,6 +9,11 @@ export type CreateMessageRequestDto = Omit<
   'id' | 'created_at' | 'updated_at' | 'deleted_at'
 > & { id?: string };
 
+export interface SendMessageResponse {
+  status: string;
+  sentTime: Date;
+}
+
 @Injectable()
 export class MessageService {
   constructor(private messageRepository: MessageRepository) {}
@@ -20,15 +25,15 @@ export class MessageService {
   async sendMessage(
     email: string,
     message: string,
-  ): Promise<AxiosResponse<Message>> {
+  ): Promise<AxiosResponse<SendMessageResponse>> {
     return await axios.post('email-service.digitalenvision.com.au/send-email', {
       email,
       message,
     });
   }
 
-  async scheduleBirthdayMessage(user: User): Promise<Message> {
-    return await this.create({
+  async scheduleBirthdayMessage(user: User): Promise<void> {
+    await this.create({
       user_id: user.id,
       text: `Happy birthday ${user.first_name} ${user.last_name}! 🎉🎉🎉`,
       type: MessageType.BIRTHDAY,
@@ -39,7 +44,7 @@ export class MessageService {
   }
 
   async deleteByUserId(user_id: string): Promise<void> {
-    await this.messageRepository.softDelete(user_id);
+    await this.messageRepository.softDeleteByUserId(user_id);
   }
 
   async getScheduled(): Promise<Message[]> {

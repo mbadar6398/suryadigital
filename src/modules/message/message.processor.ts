@@ -8,7 +8,7 @@ export class MessageProcessor {
   constructor(private messageService: MessageService) {}
 
   @Process('sendMessage')
-  async handleSendMessage(job: Job) {
+  async handleSendMessage(job: Job): Promise<void> {
     try {
       await this.messageService.sendMessage(job.data.user.email, job.data.text);
       await this.messageService.changeStatus(job.data.id, 'SENT');

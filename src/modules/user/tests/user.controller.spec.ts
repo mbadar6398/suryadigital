@@ -24,4 +24,46 @@ describe('User Controller', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  describe('create', () => {
+    it('should not throwing error when no error occured', async () => {
+      const body = {
+        first_name: 'Muhammad',
+        last_name: 'badar',
+        email: 'mbadar6398@gmail.com',
+        birth_date: '1998-03-06',
+        timezone: 'Asia/Jakarta',
+      };
+      serviceMock.create.mockResolvedValueOnce();
+      await expect(controller.create(body)).resolves.toStrictEqual(undefined);
+    });
+
+    it('should throw an error when error occured', async () => {
+      const body = {
+        first_name: 'Muhammad',
+        last_name: 'badar',
+        email: 'mbadar6398@gmail.com',
+        birth_date: '1998-03-06',
+        timezone: 'Asia/Jakarta',
+      };
+      serviceMock.create.mockRejectedValueOnce(new Error());
+      await expect(controller.create(body)).rejects.toStrictEqual(new Error());
+    });
+  });
+
+  describe('delete/:id', () => {
+    it('should not throwing error when no error occured', async () => {
+      serviceMock.delete.mockResolvedValueOnce();
+      await expect(
+        controller.delete({ id: '21312-213812-12381-128378' }),
+      ).resolves.toStrictEqual(undefined);
+    });
+
+    it('should throw an error when error occured', async () => {
+      serviceMock.delete.mockRejectedValueOnce(new Error());
+      await expect(
+        controller.delete({ id: '12832-3128-21512-12512' }),
+      ).rejects.toStrictEqual(new Error());
+    });
+  });
 });
